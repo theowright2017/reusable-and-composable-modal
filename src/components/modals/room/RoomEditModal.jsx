@@ -1,126 +1,38 @@
 import React from "react";
 
-import { useForm, Controller } from "react-hook-form";
+import { Form } from "@/components/form/FormEdit";
 
-import styles from "../../../styles/Modal.module.scss";
-import { TextInput } from "../modalItems/TextInput";
-
-export const RoomEditModal = ({ setIsOpen }) => {
-	const {
-		handleSubmit,
-		control,
-		formState: { errors },
-	} = useForm();
-
+export const RoomEditModal = ({ setIsOpen, multiEdit }) => {
 	function handleSaveProcess(formValues, event) {
+		console.log("VALS", formValues);
 		setIsOpen(false);
 		event.preventDefault();
 	}
 
 	const id = "room-edit";
-	const required = "required";
+
+	const rules = {
+		newOne: {
+			minLength: 4,
+			message: "Min Four Chars",
+			required: true,
+		},
+		description: { required: "Neededeeed" },
+	};
+
+	console.log('RUL', rules["NewOne"])
 
 	return (
-		<React.Fragment>
-			<form onSubmit={handleSubmit(handleSaveProcess)} id={id}>
-				<SplitSection>
-					<Left id={id} control={control} errors={errors} />
-					<Right id={id} control={control} errors={errors} />
-				</SplitSection>
-			</form>
-			<SaveButton id={id} />
-		</React.Fragment>
+		<Form handleSaveProcess={handleSaveProcess} id={id} multiEdit={multiEdit}>
+			<section>
+				<Form.Input name={"Name"} />
+				<Form.Input name={"Description"} rules={rules["description"]} />
+				<Form.Input name={"Amount"} type={"number"} />
+				<Form.InputNew name={"New One"} rules={rules["newOne"]} />
+				<Form.Select name={"Numbers"} options={["One", "Two", "Three"]} />
+			</section>
+
+			<Form.SaveButton id={id} />
+		</Form>
 	);
 };
-
-const SplitSection = (props) => {
-	return (
-		<div
-			style={{
-				display: "flex",
-				flexDirection: "row",
-				width: "100%",
-				justifyContent: "space-between",
-				border: '1px solid black'
-			}}
-		>
-			{props.children}
-		</div>
-	);
-};
-
-const Left = ({ control, errors, id }) => {
-	return (
-		<div>
-			<Controller
-				control={control}
-				disabled={false}
-				rules={{
-					required: "Needed",
-					maxLength: {
-						value: 3,
-						message: "too long",
-					},
-				}}
-				name={"Name"}
-				render={({ field: { onChange, onBlur, value, ref } }) => {
-					return (
-						<React.Fragment>
-							<TextInput
-								id={id}
-								label={"Name"}
-								changeHandler={onChange}
-								value={value}
-							/>
-							{errors.Name && <span role="alert">{errors.Name.message}</span>}
-						</React.Fragment>
-					);
-				}}
-			/>
-			<Controller
-				control={control}
-				name={"Department"}
-				render={({ field: { onChange, onBlur, value, ref } }) => (
-					<TextInput
-						id={id}
-						label={"Department"}
-						changeHandler={onChange}
-						value={value}
-					/>
-				)}
-			/>
-		</div>
-	);
-};
-
-const Right = ({ control, errors, id }) => {
-	return (
-		<div>
-			<Controller
-				control={control}
-				name={"Details"}
-				render={({ field: { onChange, onBlur, value, ref } }) => (
-					<TextInput
-						id={id}
-						label={"Details"}
-						changeHandler={onChange}
-						value={value}
-					/>
-				)}
-			/>
-		</div>
-	);
-};
-
-const SaveButton = ({ id }) => (
-	<div style={{ display: "flex", marginTop: 25, justifyContent: "flex-end" }}>
-		<button
-			className={`${styles.Button} ${styles.green}`}
-			type={"submit"}
-			id={id}
-			form={id}
-		>
-			Save changes
-		</button>
-	</div>
-);

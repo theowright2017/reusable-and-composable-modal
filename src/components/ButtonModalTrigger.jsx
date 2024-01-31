@@ -1,10 +1,17 @@
 import ModalDemo from "./modals/Modal";
 import { RoomEditModal } from "./modals/room/RoomEditModal";
 
-export const ButtonModalTrigger = ({ name }) => {
+export const ButtonModalTrigger = ({ name, multi }) => {
 	return (
 		<ModalDemo trigger={<button>{name}</button>} title={"Edit Room Modal"}>
-			{(setIsOpen) => <RoomEditModal setIsOpen={setIsOpen} />}
+			{(setIsOpen) => (
+				<RoomEditModal
+					setIsOpen={setIsOpen}
+					multi={multi}
+					onSingleUpdate={(values) => console.log("on single updates: ", values)}
+					onMultiUpdate={(values) => console.log("on multi update:", values)}
+				/>
+			)}
 		</ModalDemo>
 	);
 };

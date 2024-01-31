@@ -1,34 +1,40 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 import { useForm, useController, Controller } from "react-hook-form";
 import { TextInput } from "../modals/modalItems/TextInput";
 
 import styles from "../../styles/Modal.module.scss";
 
-const FormContext = createContext();
+export const FormContext = createContext();
 
 const Form = (props) => {
-	const { handleSaveProcess, id, multiEdit } = props;
+	const { handleSaveProcess, id, multiEdit, values } = props;
 
-	const { handleSubmit, control } = useForm();
+	const { handleSubmit, control, formState, getFieldState } = useForm({
+		defaultValues: values,
+	});
+
+	const { dirtyFields } = formState;
 	return (
-		<FormContext.Provider value={{ control, id }}>
-			<form onSubmit={handleSubmit(handleSaveProcess)} id={id}>
+		<FormContext.Provider value={{ control, id, multiEdit }}>
+			<form
+				onSubmit={handleSubmit((data, event) => {
+					handleSaveProcess(data, event, dirtyFields);
+				})}
+				id={id}
+			>
 				{props.children}
 			</form>
 		</FormContext.Provider>
 	);
 };
 
-const ItemContent = (props) => {
-	const { error } = props;
-	return (
-		<React.Fragment>
-			{props.children}
-			{error && <span role="alert">{error.message}</span>}
-		</React.Fragment>
-	);
-};
+const ItemContent = (props) => (
+	<React.Fragment>
+		{props.children}
+		{props.error && <span role="alert">{props.error.message}</span>}
+	</React.Fragment>
+);
 
 const FormInput = (props) => {
 	const { control, id } = useContext(FormContext);
@@ -61,21 +67,29 @@ const FormInput = (props) => {
 
 const FormInputNew = (props) => {
 	const { control, id } = useContext(FormContext);
-	const { name, rules = {} } = props;
+	const { name, rules = {}, disabled } = props;
 
 	const { field, fieldState, formState } = useController({
 		name,
 		control,
 		rules: rules,
+		disabled: disabled,
 	});
 
 	const { onChange, value } = field;
 	const { error } = fieldState;
-	console.log("rules", error);
+	console.log("rulesNEW", formState);
 
 	return (
 		<ItemContent error={null}>
-			<TextInput label={name} changeHandler={onChange} value={value} />
+			<TextInput
+				label={name}
+				changeHandler={onChange}
+				value={value}
+				disabled={field.disabled}
+			>
+				{props.children}
+			</TextInput>
 			{error?.minLength && error.minLength < 4 && (
 				<span role="alert">{error.message}</span>
 			)}
@@ -93,6 +107,7 @@ const FormSelect = (props) => {
 			name={name}
 			control={control}
 			rules={rules}
+			disabled={props.disabled}
 			render={({
 				field: { onChange, onBlur, value, ref },
 				fieldState: { error },
@@ -100,7 +115,12 @@ const FormSelect = (props) => {
 				return (
 					<ItemContent error={error}>
 						<label value={name}>
-							<select defaultValue={value} onChange={onChange}>
+							{props.children}
+							<select
+								defaultValue={value}
+								onChange={onChange}
+								disabled={props.disabled}
+							>
 								{options.map((opt) => (
 									<option key={opt} value={opt}>
 										{opt}

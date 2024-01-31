@@ -6,8 +6,8 @@ const ModalTextInput = React.forwardRef((props, ref) => {
 });
 
 const TextInput = (props) => {
-	const { id, label, changeHandler, type } = props;
-	
+	const { id, label, changeHandler, type, disabled, value } = props;
+
 	return (
 		<div
 			style={{
@@ -21,12 +21,18 @@ const TextInput = (props) => {
 			<Label.Root className="LabelRoot" htmlFor={id}>
 				{label}
 			</Label.Root>
+
+			{/* maybe render something between label and input, i.e checkbox */}
+			{props.children}
+
 			<input
 				className="Input"
 				type={type}
 				id={id}
 				placeholder={label}
 				onChange={changeHandler}
+				disabled={disabled}
+				value={value}
 			/>
 		</div>
 	);

@@ -3,7 +3,7 @@ import React from "react";
 import { Form } from "@/components/form/FormEdit";
 import { MultiForm } from "@/components/form/MultiFormEditLayer";
 
-export const RoomEditModal = ({ setIsOpen, multi, ...rest }) => {
+export const RoomEditModal = ({ data, setIsOpen, multi, ...rest }) => {
 	function handleSaveProcess(formValues, event, dirtyFields) {
 		if (multi) {
 			const allValuesMap = new Map(Object.entries(formValues));
@@ -41,7 +41,8 @@ export const RoomEditModal = ({ setIsOpen, multi, ...rest }) => {
 	};
 
 	const defaultValues = {
-		MUltiBOI: "YERRRP",
+		Campus: 'Central',
+		Building: 'A Block'
 	};
 
 	return (
@@ -51,18 +52,52 @@ export const RoomEditModal = ({ setIsOpen, multi, ...rest }) => {
 			multiEdit={multi}
 			values={defaultValues}
 		>
-			<section>
-				{/* 
-				<MultiForm.Input name={"MUltiBOI"} />
-				<Form.InputNew name={"New One"} rules={rules["newOne"]} />
-				<Form.Select name={"Numbers"} options={["One", "Two", "Three"]} />
-				<MultiForm.Select name={"Multi Numbers"} options={["12", "13", "14"]} /> */}
-				<MultiForm.GroupEditInput name={"one"} groupName={"group"} />
-				<MultiForm.GroupEditInput name={"two"} groupName={"group"} />
-				<MultiForm.Input name={"MUltiBOI"} />
+			<section
+				id={"section-one"}
+				style={{ display: "flex", flexDirection: "row" }}
+			>
+				<section id={"left"}>
+					<MultiForm.Input name={"Code"} />
+					<MultiForm.Input name={"Name"} />
+					<MultiForm.GroupEditSelect
+						name={"Department"}
+						groupName={"location"}
+						options={data.departmentOptions}
+					/>
+					<MultiForm.GroupEditSelect
+						name={"Campus"}
+						groupName={"location"}
+						options={data.campusOptions}
+					/>
+					<MultiForm.GroupEditSelectConsumer
+						name={"Building"}
+						groupName={"location"}
+						options={data.buildingOptions}
+						provider={'Campus'}
+					/>
+					<MultiForm.GroupEditSelectConsumer
+						name={"Floor"}
+						groupName={"location"}
+						options={data.floorOptions}
+						provider={'Building'}
+					/>
+					{/* <MultiForm.Check name={'Virtual'} /> */}
+					<MultiForm.Input name={"Area (m2)"} type={"number"} />
+					<MultiForm.Input name={"Carbon Cost"} type={"number"} />
+					{/* <MultiForm.Check name={'Reserved'} /> */}
+				</section>
+				<section id={"right"}>
+					<MultiForm.Input name={"Talk"} type={"number"} />
+					<MultiForm.Input name={"Seminar"} type={"number"} />
+					<MultiForm.Input name={"Laboratory"} type={"number"} />
+					<MultiForm.Input name={"Practical"} type={"number"} />
+					<MultiForm.Input name={"Workshop"} type={"number"} />
+				</section>
 			</section>
 
 			<Form.SaveButton id={id} />
 		</MultiForm.Form>
 	);
 };
+
+// const 

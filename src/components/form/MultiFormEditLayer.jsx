@@ -65,8 +65,10 @@ const multiEditGroupWrapper = (Componet) => {
 };
 
 MultiForm.Form = Form;
-MultiForm.Input = multiEditWrapper(Form.InputNew);
+MultiForm.Input = multiEditWrapper(Form.Input);
 MultiForm.Select = multiEditWrapper(Form.Select);
 // MultiForm.Grouping = (items) => console.log("ITEMS", items);
-MultiForm.GroupEditInput = multiEditGroupWrapper(Form.InputNew);
+MultiForm.GroupEditInput = multiEditGroupWrapper(Form.Input);
+MultiForm.GroupEditSelect = multiEditGroupWrapper(Form.Select);
+MultiForm.GroupEditSelectConsumer = multiEditGroupWrapper(Form.SelectConsumer);
 export { MultiForm };
